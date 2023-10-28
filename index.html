@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      canvas {
+        border: 1px solid #000;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas
+      id="myCanvas"
+      width="16"
+      height="34"
+      style="background-color: black"
+    ></canvas>
+    <a id="downloadLink" download="pixel_data.txt" href="#">Download</a>
+
+    <script>
+      // Get the canvas and its context
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+
+      ctx.fillStyle = "white"; // Set font color to red (you can choose any color)
+      ctx.font = "bold 20px Arial"; // Set font style
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("A", canvas.width / 2, canvas.height / 2);
+
+      function getPixelColorData(canvas) {
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let hexData = "";
+
+        for (let y = 0; y < canvas.height; y++) {
+          for (let x = 0; x < canvas.width; x++) {
+            const i = (y * canvas.width + x) * 4;
+            const r = data[i].toString(16).padStart(2, "0");
+            const g = data[i + 1].toString(16).padStart(2, "0");
+            const b = data[i + 2].toString(16).padStart(2, "0");
+            hexData += `0x${r}${g}${b}, `;
+          }
+          hexData += "\n";
+        }
+
+        return hexData;
+      }
+
+      const downloadLink = document.getElementById("downloadLink");
+      downloadLink.addEventListener("click", () => {
+        const pixelColorData = getPixelColorData(canvas);
+        const blob = new Blob([pixelColorData], { type: "text/plain" });
+        downloadLink.href = URL.createObjectURL(blob);
+      });
+    </script>
+  </body>
+</html>
